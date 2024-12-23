@@ -5,28 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c61d5769-b82e-454f-b662-d5f0378352d4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/AttendanceMode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/CourseLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/EnrollmentStatus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/NotificationPriority.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/NotificationType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/QuestionType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/enums/UserRole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/dao/generic/GenericDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Answer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Answer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Attendance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Attendance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Course.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Enrollment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Enrollment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Lesson.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Lesson.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Notification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Question.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Quiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Quiz.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/QuizResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/QuizResult.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/StudentAnswer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/StudentAnswer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Subject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Teaching.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/Teaching.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/prosperi/argeo/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +17,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
