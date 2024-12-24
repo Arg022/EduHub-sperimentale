@@ -10,9 +10,6 @@ import java.util.UUID;
 public class NotificationService {
     private final NotificationDAO notificationDAO = new NotificationDAO();
 
-    public NotificationService(NotificationDAO notificationDAO) {
-        this.notificationDAO = notificationDAO;
-    }
 
     public Notification createNotification(Notification notification) {
         return notificationDAO.addNotification(notification);
