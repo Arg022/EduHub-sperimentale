@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class CourseService {
     private final CourseDAO courseDAO = new CourseDAO();
-
+    
     public Course createCourse(Course course) {
         return courseDAO.addCourse(course);
     }

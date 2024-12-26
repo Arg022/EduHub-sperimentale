@@ -8,11 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class QuizService {
-    private final QuizDAO quizDAO;
-
-    public QuizService(QuizDAO quizDAO) {
-        this.quizDAO = quizDAO;
-    }
+    private final QuizDAO quizDAO = new QuizDAO();
 
     public Quiz createQuiz(Quiz quiz) {
         return quizDAO.addQuiz(quiz);

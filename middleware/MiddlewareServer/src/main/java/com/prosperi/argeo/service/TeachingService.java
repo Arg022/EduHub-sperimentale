@@ -10,7 +10,6 @@ import java.util.UUID;
 public class TeachingService {
     private final TeachingDAO teachingDAO = new TeachingDAO();
 
-
     public Teaching createTeaching(Teaching teaching) {
         return teachingDAO.addTeaching(teaching);
     }

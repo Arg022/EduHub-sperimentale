@@ -10,7 +10,6 @@ import java.util.UUID;
 public class AttendanceService {
     private final AttendanceDAO attendanceDAO = new AttendanceDAO();
 
-
     public Attendance createAttendance(Attendance attendance) {
         return attendanceDAO.addAttendance(attendance);
     }

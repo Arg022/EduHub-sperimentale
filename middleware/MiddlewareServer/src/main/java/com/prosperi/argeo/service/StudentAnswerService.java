@@ -10,7 +10,6 @@ import java.util.UUID;
 public class StudentAnswerService {
     private final StudentAnswerDAO studentAnswerDAO = new StudentAnswerDAO();
 
-
     public StudentAnswer createStudentAnswer(StudentAnswer studentAnswer) {
         return studentAnswerDAO.addStudentAnswer(studentAnswer);
     }

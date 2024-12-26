@@ -10,7 +10,6 @@ import java.util.UUID;
 public class LessonService {
     private final LessonDAO lessonDAO = new LessonDAO();
 
-
     public Lesson createLesson(Lesson lesson) {
         return lessonDAO.addLesson(lesson);
     }

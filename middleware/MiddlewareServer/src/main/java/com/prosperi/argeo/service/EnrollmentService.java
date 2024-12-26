@@ -10,7 +10,6 @@ import java.util.UUID;
 public class EnrollmentService {
     private final EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
 
-
     public Enrollment createEnrollment(Enrollment enrollment) {
         return enrollmentDAO.addEnrollment(enrollment);
     }

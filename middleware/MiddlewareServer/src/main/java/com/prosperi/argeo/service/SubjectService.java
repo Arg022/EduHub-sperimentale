@@ -10,7 +10,6 @@ import java.util.UUID;
 public class SubjectService {
     private final SubjectDAO subjectDAO = new SubjectDAO();
 
-
     public Subject createSubject(Subject subject) {
         return subjectDAO.addSubject(subject);
     }
