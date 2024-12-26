@@ -8,7 +8,7 @@ public class Main {
 
         Javalin app = Javalin.create(config -> {
             config.plugins.enableCors(cors -> cors.add(it -> it.anyHost()));
-        }).start(8081);
+        }).start(8082);
 
         new UserController().registerRoutes(app);
         new CourseController().registerRoutes(app);
@@ -25,6 +25,6 @@ public class Main {
         new NotificationController().registerRoutes(app);
 
 
-        System.out.println("Server is running on port 8081");
+        System.out.println("Server is running on port 8082");
     }
 }

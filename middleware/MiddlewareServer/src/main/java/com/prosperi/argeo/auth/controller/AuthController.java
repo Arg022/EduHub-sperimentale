@@ -4,9 +4,6 @@ import com.prosperi.argeo.auth.util.JwtUtil;
 import com.prosperi.argeo.model.User;
 import com.prosperi.argeo.service.UserService;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
-
-import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -14,7 +11,7 @@ import java.util.Optional;
 
 public class AuthController {
 
-    private final UserService userService = new UserService(); // Usa il tuo service per gestire gli utenti
+    private final UserService userService = new UserService();
     private final String apiVersionV1 = "/api/v1";
 
     public void registerRoutes(Javalin app) {
@@ -32,13 +29,13 @@ public class AuthController {
 
             User user = userOpt.get();
 
-            // Verify the password using BCrypt
+
             if (!BCrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
                 ctx.status(HttpStatus.UNAUTHORIZED).result("Invalid email or password");
                 return;
             }
 
-            // Generate JWT Token
+
             String token = JwtUtil.generateToken(user.getId().toString());
 
             ctx.status(HttpStatus.OK).json(new LoginResponse(token));
