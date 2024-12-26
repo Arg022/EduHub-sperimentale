@@ -25,4 +25,8 @@ public class UserService {
     public boolean deleteUserById(UUID id) {
         return userDAO.deleteById(id);
     }
+
+    public Optional<User> findUserByEmail(String email) {
+        return userDAO.findByEmail(email);
+    }
 }

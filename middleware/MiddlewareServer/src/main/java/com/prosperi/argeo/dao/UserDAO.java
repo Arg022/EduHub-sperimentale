@@ -98,4 +98,30 @@ public class UserDAO {
             throw new RuntimeException("Error deleting user by ID", e);
         }
     }
+
+    public Optional<User> findByEmail(String email) {
+        String selectSQL = "SELECT * FROM public.\"user_account\" WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getObject("id", java.util.UUID.class));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setFirstName(rs.getString("first_name"));
+                    user.setLastName(rs.getString("last_name"));
+                    user.setRole(UserRole.valueOf(rs.getString("role")));
+                    user.setRegistrationDate(rs.getDate("registration_date").toLocalDate());
+                    user.setPhone(rs.getString("phone"));
+                    user.setAddress(rs.getString("address"));
+                    user.setLastAccess(rs.getTimestamp("last_access").toLocalDateTime());
+                    return Optional.of(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching user by email", e);
+        }
+        return Optional.empty();
+    }
 }
