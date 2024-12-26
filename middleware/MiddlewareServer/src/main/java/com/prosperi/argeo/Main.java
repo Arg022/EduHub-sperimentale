@@ -1,17 +1,30 @@
 package com.prosperi.argeo;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import com.prosperi.argeo.controller.v1.*;
+import io.javalin.Javalin;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        Javalin app = Javalin.create(config -> {
+            config.plugins.enableCors(cors -> cors.add(it -> it.anyHost()));
+        }).start(8081);
+
+        new UserController().registerRoutes(app);
+        new CourseController().registerRoutes(app);
+        new SubjectController().registerRoutes(app);
+        new LessonController().registerRoutes(app);
+        new EnrollmentController().registerRoutes(app);
+        new TeachingController().registerRoutes(app);
+        new AttendanceController().registerRoutes(app);
+        new QuizController().registerRoutes(app);
+        new QuestionController().registerRoutes(app);
+        new AnswerController().registerRoutes(app);
+        new QuizResultController().registerRoutes(app);
+        new StudentAnswerController().registerRoutes(app);
+        new NotificationController().registerRoutes(app);
+
+
+        System.out.println("Server is running on port 8081");
     }
 }
