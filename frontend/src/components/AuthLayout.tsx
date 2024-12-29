@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { Header } from "@/components/loginLayout/header"
+import { Header } from "@/components/loginLayout/Header"
 import { Footer } from "./loginLayout/Footer";
 
 const AuthLayout = () => {
