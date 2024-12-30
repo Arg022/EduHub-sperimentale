@@ -5,6 +5,7 @@ import com.prosperi.argeo.model.Course;
 import com.prosperi.argeo.util.database.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +15,19 @@ public class CourseDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Course addCourse(Course course) {
-        String insertSQL = "INSERT INTO public.\"course\" (name, description, category, start_date, end_date, syllabus, max_students, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.course (id, name, description, category, start_date, end_date, syllabus, max_students, level) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::course_level)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setString(1, course.getName());
-            ps.setString(2, course.getDescription());
-            ps.setString(3, course.getCategory());
-            ps.setDate(4, Date.valueOf(course.getStartDate()));
-            ps.setDate(5, Date.valueOf(course.getEndDate()));
-            ps.setString(6, course.getSyllabus());
-            ps.setInt(7, course.getMaxStudents());
-            ps.setString(8, course.getLevel().name());
+            ps.setObject(1, course.getId());
+            ps.setString(2, course.getName());
+            ps.setString(3, course.getDescription());
+            ps.setString(4, course.getCategory());
+            ps.setDate(5, Date.valueOf(course.getStartDate()));
+            ps.setDate(6, Date.valueOf(course.getEndDate()));
+            ps.setString(7, course.getSyllabus());
+            ps.setInt(8, course.getMaxStudents());
+            ps.setString(9, course.getLevel().name().toLowerCase());
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -34,7 +37,7 @@ public class CourseDAO {
     }
 
     public List<Course> getAllCourses() {
-        String selectSQL = "SELECT * FROM public.\"course\"";
+        String selectSQL = "SELECT * FROM public.course";
         List<Course> courses = new ArrayList<>();
 
         try (PreparedStatement ps = connection.prepareStatement(selectSQL);
@@ -42,7 +45,7 @@ public class CourseDAO {
 
             while (rs.next()) {
                 Course course = new Course();
-                course.setId(rs.getObject("id", java.util.UUID.class));
+                course.setId(rs.getObject("id", UUID.class));
                 course.setName(rs.getString("name"));
                 course.setDescription(rs.getString("description"));
                 course.setCategory(rs.getString("category"));
@@ -60,13 +63,13 @@ public class CourseDAO {
     }
 
     public Optional<Course> findCourseById(UUID id) {
-        String selectSQL = "SELECT * FROM public.\"course\" WHERE id = ?";
+        String selectSQL = "SELECT * FROM public.course WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setObject(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Course course = new Course();
-                    course.setId(rs.getObject("id", java.util.UUID.class));
+                    course.setId(rs.getObject("id", UUID.class));
                     course.setName(rs.getString("name"));
                     course.setDescription(rs.getString("description"));
                     course.setCategory(rs.getString("category"));
@@ -83,8 +86,9 @@ public class CourseDAO {
         }
         return Optional.empty();
     }
+
     public boolean deleteById(UUID id) {
-        String deleteSQL = "DELETE FROM public.\"course\" WHERE id = ?";
+        String deleteSQL = "DELETE FROM public.course WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(deleteSQL)) {
             ps.setObject(1, id);
             int rowsAffected = ps.executeUpdate();

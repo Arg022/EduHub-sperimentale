@@ -1,32 +1,38 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.enums.UserRole;
-import com.prosperi.argeo.model.User;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.enums.UserRole;
+import com.prosperi.argeo.model.User;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class UserDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public User addUser(User user) {
-        String insertSQL = "INSERT INTO public.\"user_account\" (email, password, first_name, last_name, role, registration_date, phone, address, last_access) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"user_account\" (id, email, password, first_name, last_name, role, registration_date, phone, address, last_access) " +
+                "VALUES (?, ?, ?, ?, ?, ?::user_role, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setString(1, user.getEmail());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getFirstName());
-            ps.setString(4, user.getLastName());
-            ps.setString(5, user.getRole().name());
-            ps.setDate(6, Date.valueOf(user.getRegistrationDate()));
-            ps.setString(7, user.getPhone());
-            ps.setString(8, user.getAddress());
-            ps.setTimestamp(9, Timestamp.valueOf(user.getLastAccess()));
+            ps.setObject(1, user.getId()); 
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.setString(4, user.getFirstName());
+            ps.setString(5, user.getLastName());
+            ps.setString(6, user.getRole().name().toLowerCase()); // Usa il nome dell'enum
+            ps.setDate(7, Date.valueOf(user.getRegistrationDate()));
+            ps.setString(8, user.getPhone());
+            ps.setString(9, user.getAddress());
+            ps.setTimestamp(10, Timestamp.valueOf(user.getLastAccess())); // Passa il valore corretto di lastAccess
 
             ps.executeUpdate();
         } catch (SQLException e) {

@@ -1,46 +1,70 @@
 package com.prosperi.argeo.util;
 
-import com.prosperi.argeo.dao.*;
-import com.prosperi.argeo.enums.*;
-import com.prosperi.argeo.model.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
+import com.prosperi.argeo.enums.AttendanceMode;
+import com.prosperi.argeo.enums.CourseLevel;
+import com.prosperi.argeo.enums.EnrollmentStatus;
+import com.prosperi.argeo.enums.NotificationPriority;
+import com.prosperi.argeo.enums.NotificationType;
+import com.prosperi.argeo.enums.QuestionType;
+import com.prosperi.argeo.enums.UserRole;
+import com.prosperi.argeo.model.Answer;
+import com.prosperi.argeo.model.Attendance;
+import com.prosperi.argeo.model.Course;
+import com.prosperi.argeo.model.Enrollment;
+import com.prosperi.argeo.model.Lesson;
+import com.prosperi.argeo.model.Notification;
+import com.prosperi.argeo.model.Question;
+import com.prosperi.argeo.model.Quiz;
+import com.prosperi.argeo.model.Subject;
+import com.prosperi.argeo.model.Teaching;
+import com.prosperi.argeo.model.User;
+import com.prosperi.argeo.service.AnswerService;
+import com.prosperi.argeo.service.AttendanceService;
+import com.prosperi.argeo.service.CourseService;
+import com.prosperi.argeo.service.EnrollmentService;
+import com.prosperi.argeo.service.LessonService;
+import com.prosperi.argeo.service.NotificationService;
+import com.prosperi.argeo.service.QuestionService;
+import com.prosperi.argeo.service.QuizService;
+import com.prosperi.argeo.service.SubjectService;
+import com.prosperi.argeo.service.TeachingService;
+import com.prosperi.argeo.service.UserService;
+
 public class DataLoader {
 
     public static void loadInitialData() {
-        // DAOs
-        UserDAO userDAO = new UserDAO();
-        CourseDAO courseDAO = new CourseDAO();
-        SubjectDAO subjectDAO = new SubjectDAO();
-        LessonDAO lessonDAO = new LessonDAO();
-        EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
-        TeachingDAO teachingDAO = new TeachingDAO();
-        AttendanceDAO attendanceDAO = new AttendanceDAO();
-        QuizDAO quizDAO = new QuizDAO();
-        QuestionDAO questionDAO = new QuestionDAO();
-        AnswerDAO answerDAO = new AnswerDAO();
-        QuizResultDAO quizResultDAO = new QuizResultDAO();
-        StudentAnswerDAO studentAnswerDAO = new StudentAnswerDAO();
-        NotificationDAO notificationDAO = new NotificationDAO();
+        // SERVICES
+        UserService userService = new UserService();
+        CourseService courseService = new CourseService();
+        SubjectService subjectService = new SubjectService();
+        LessonService lessonService = new LessonService();
+        EnrollmentService enrollmentService = new EnrollmentService();
+        TeachingService teachingService = new TeachingService();
+        AttendanceService attendanceService = new AttendanceService();
+        QuizService quizService = new QuizService();
+        QuestionService questionService = new QuestionService();
+        AnswerService answerService = new AnswerService();
+        NotificationService notificationService = new NotificationService();
 
         // USERS
-        User admin = User.builder()
-                .id(UUID.randomUUID())
+        User user = User.builder()
+                .id(UUID.randomUUID()) // Genera un ID univoco
                 .email("admin@example.com")
-                .password("admin123") // Usa un sistema di hashing sicuro in produzione
+                .password("securepassword")
                 .firstName("Admin")
                 .lastName("User")
                 .role(UserRole.ADMIN)
                 .registrationDate(LocalDate.now())
                 .phone("123456789")
-                .address("Admin Street 1")
+                .address("123 Admin Street")
                 .lastAccess(LocalDateTime.now())
                 .build();
-        userDAO.addUser(admin);
+        userService.createUser(user);
 
         User teacher = User.builder()
                 .id(UUID.randomUUID())
@@ -54,7 +78,7 @@ public class DataLoader {
                 .address("Teacher Lane 2")
                 .lastAccess(LocalDateTime.now())
                 .build();
-        userDAO.addUser(teacher);
+        userService.createUser(teacher);
 
         User student = User.builder()
                 .id(UUID.randomUUID())
@@ -68,7 +92,7 @@ public class DataLoader {
                 .address("Student Avenue 3")
                 .lastAccess(LocalDateTime.now())
                 .build();
-        userDAO.addUser(student);
+        userService.createUser(student);
 
         // COURSES
         Course course = Course.builder()
@@ -82,7 +106,7 @@ public class DataLoader {
                 .maxStudents(30)
                 .level(CourseLevel.BEGINNER)
                 .build();
-        courseDAO.addCourse(course);
+        courseService.createCourse(course);
 
         // SUBJECTS
         Subject subject = Subject.builder()
@@ -90,7 +114,7 @@ public class DataLoader {
                 .name("Object-Oriented Programming")
                 .description("Understand the principles of OOP.")
                 .build();
-        subjectDAO.addSubject(subject);
+        subjectService.createSubject(subject);
 
         // LESSONS
         Lesson lesson = Lesson.builder()
@@ -103,7 +127,7 @@ public class DataLoader {
                 .startTime(LocalTime.of(10, 0))
                 .endTime(LocalTime.of(12, 0))
                 .build();
-        lessonDAO.addLesson(lesson);
+        lessonService.createLesson(lesson);
 
         // ENROLLMENTS
         Enrollment enrollment = Enrollment.builder()
@@ -113,7 +137,7 @@ public class DataLoader {
                 .enrollmentDate(LocalDate.now())
                 .status(EnrollmentStatus.ACTIVE)
                 .build();
-        enrollmentDAO.addEnrollment(enrollment);
+        enrollmentService.createEnrollment(enrollment);
 
         // TEACHING
         Teaching teaching = Teaching.builder()
@@ -124,7 +148,7 @@ public class DataLoader {
                 .startDate(LocalDate.now())
                 .endDate(course.getEndDate())
                 .build();
-        teachingDAO.addTeaching(teaching);
+        teachingService.createTeaching(teaching);
 
         // ATTENDANCE
         Attendance attendance = Attendance.builder()
@@ -136,7 +160,7 @@ public class DataLoader {
                 .notes("Student was on time.")
                 .recordTime(LocalDateTime.now())
                 .build();
-        attendanceDAO.addAttendance(attendance);
+        attendanceService.createAttendance(attendance);
 
         // QUIZ
         Quiz quiz = Quiz.builder()
@@ -150,7 +174,7 @@ public class DataLoader {
                 .creationDate(LocalDateTime.now())
                 .publicationDate(LocalDateTime.now().plusDays(1))
                 .build();
-        quizDAO.addQuiz(quiz);
+        quizService.createQuiz(quiz);
 
         // QUESTIONS AND ANSWERS
         Question question = Question.builder()
@@ -160,7 +184,7 @@ public class DataLoader {
                 .score(1.0f)
                 .questionType(QuestionType.MULTIPLE_CHOICE)
                 .build();
-        questionDAO.addQuestion(question);
+        questionService.createQuestion(question);
 
         Answer answer1 = Answer.builder()
                 .id(UUID.randomUUID())
@@ -168,7 +192,7 @@ public class DataLoader {
                 .text("Object-Oriented Programming")
                 .isCorrect(true)
                 .build();
-        answerDAO.addAnswer(answer1);
+        answerService.createAnswer(answer1);
 
         Answer answer2 = Answer.builder()
                 .id(UUID.randomUUID())
@@ -176,19 +200,20 @@ public class DataLoader {
                 .text("Objective-Oriented Programming")
                 .isCorrect(false)
                 .build();
-        answerDAO.addAnswer(answer2);
+        answerService.createAnswer(answer2);
 
         // NOTIFICATIONS
         Notification notification = Notification.builder()
                 .id(UUID.randomUUID())
-                .senderId(admin.getId())
+                .senderId(user.getId())
                 .recipientId(student.getId())
                 .title("Welcome!")
                 .content("Welcome to the platform!")
                 .notificationType(NotificationType.SYSTEM)
                 .priority(NotificationPriority.HIGH)
                 .creationDate(LocalDateTime.now())
+                .readDate(null) // Assicurati di gestire il campo readDate
                 .build();
-        notificationDAO.addNotification(notification);
+        notificationService.createNotification(notification);
     }
 }

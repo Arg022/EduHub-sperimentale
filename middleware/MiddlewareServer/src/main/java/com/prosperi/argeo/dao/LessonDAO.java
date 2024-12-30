@@ -1,30 +1,37 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.model.Lesson;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.model.Lesson;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class LessonDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Lesson addLesson(Lesson lesson) {
-        String insertSQL = "INSERT INTO public.\"lesson\" (course_id, subject_id, title, description, date, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"lesson\" (id, course_id, subject_id, title, description, date, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, lesson.getCourseId());
-            ps.setObject(2, lesson.getSubjectId());
-            ps.setString(3, lesson.getTitle());
-            ps.setString(4, lesson.getDescription());
-            ps.setDate(5, Date.valueOf(lesson.getDate()));
-            ps.setTime(6, Time.valueOf(lesson.getStartTime()));
-            ps.setTime(7, Time.valueOf(lesson.getEndTime()));
-
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, lesson.getCourseId());
+            ps.setObject(3, lesson.getSubjectId());
+            ps.setString(4, lesson.getTitle());
+            ps.setString(5, lesson.getDescription());
+            ps.setDate(6, Date.valueOf(lesson.getDate()));
+            ps.setTime(7, Time.valueOf(lesson.getStartTime()));
+            ps.setTime(8, Time.valueOf(lesson.getEndTime()));
             ps.executeUpdate();
+            lesson.setId(id);
         } catch (SQLException e) {
             throw new RuntimeException("Error adding lesson", e);
         }

@@ -1,24 +1,30 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.model.Subject;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.model.Subject;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class SubjectDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Subject addSubject(Subject subject) {
-        String insertSQL = "INSERT INTO public.\"subject\" (name, description) VALUES (?, ?)";
-
+        String insertSQL = "INSERT INTO public.\"subject\" (id, name, description) VALUES (?, ?, ?)";
+    
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setString(1, subject.getName());
-            ps.setString(2, subject.getDescription());
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setString(2, subject.getName());
+            ps.setString(3, subject.getDescription());
             ps.executeUpdate();
+            subject.setId(id);
         } catch (SQLException e) {
             throw new RuntimeException("Error adding subject", e);
         }

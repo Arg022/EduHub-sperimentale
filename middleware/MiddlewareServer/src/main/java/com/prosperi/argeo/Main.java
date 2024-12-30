@@ -1,10 +1,13 @@
 package com.prosperi.argeo;
 
 import com.prosperi.argeo.controller.v1.*;
+import com.prosperi.argeo.util.DataLoader;
 import io.javalin.Javalin;
 
 public class Main {
     public static void main(String[] args) {
+
+        DataLoader.loadInitialData();
 
         Javalin app = Javalin.create(config -> {
             config.plugins.enableCors(cors -> cors.add(it -> it.anyHost()));

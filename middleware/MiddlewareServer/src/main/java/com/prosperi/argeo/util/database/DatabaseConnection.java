@@ -8,7 +8,7 @@ public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection connection;
 
-    private final String UrlDB = "jdbc:postgresql://localhost:5432/learning_platform";
+    private final String UrlDB = "jdbc:postgresql://localhost:5432/learning_platforms";
     private final String userDB = "postgres";
     private final String pwdDB = "password";
 

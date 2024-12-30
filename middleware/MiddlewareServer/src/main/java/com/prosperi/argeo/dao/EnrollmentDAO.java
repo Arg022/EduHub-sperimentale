@@ -1,28 +1,35 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.enums.EnrollmentStatus;
-import com.prosperi.argeo.model.Enrollment;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.enums.EnrollmentStatus;
+import com.prosperi.argeo.model.Enrollment;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class EnrollmentDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Enrollment addEnrollment(Enrollment enrollment) {
-        String insertSQL = "INSERT INTO public.\"enrollment\" (user_id, course_id, enrollment_date, status) VALUES (?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"enrollment\" (id, user_id, course_id, enrollment_date, status) VALUES (?, ?, ?, ?, ?::enrollment_status)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, enrollment.getUserId());
-            ps.setObject(2, enrollment.getCourseId());
-            ps.setDate(3, Date.valueOf(enrollment.getEnrollmentDate()));
-            ps.setString(4, enrollment.getStatus().name());
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, enrollment.getUserId());
+            ps.setObject(3, enrollment.getCourseId());
+            ps.setDate(4, Date.valueOf(enrollment.getEnrollmentDate()));
+            ps.setObject(5, enrollment.getStatus().name().toLowerCase());
 
             ps.executeUpdate();
+            enrollment.setId(id); // Imposta l'ID generato nell'iscrizione
         } catch (SQLException e) {
             throw new RuntimeException("Error adding enrollment", e);
         }
@@ -42,7 +49,7 @@ public class EnrollmentDAO {
                 enrollment.setUserId(rs.getObject("user_id", java.util.UUID.class));
                 enrollment.setCourseId(rs.getObject("course_id", java.util.UUID.class));
                 enrollment.setEnrollmentDate(rs.getDate("enrollment_date").toLocalDate());
-                enrollment.setStatus(EnrollmentStatus.valueOf(rs.getString("status")));
+                enrollment.setStatus(EnrollmentStatus.valueOf(rs.getString("status").toUpperCase())); // Converti in maiuscolo
                 enrollments.add(enrollment);
             }
         } catch (SQLException e) {
@@ -62,7 +69,7 @@ public class EnrollmentDAO {
                     enrollment.setUserId(rs.getObject("user_id", java.util.UUID.class));
                     enrollment.setCourseId(rs.getObject("course_id", java.util.UUID.class));
                     enrollment.setEnrollmentDate(rs.getDate("enrollment_date").toLocalDate());
-                    enrollment.setStatus(EnrollmentStatus.valueOf(rs.getString("status")));
+                    enrollment.setStatus(EnrollmentStatus.valueOf(rs.getString("status").toUpperCase())); // Converti in maiuscolo
                     return Optional.of(enrollment);
                 }
             }
@@ -71,6 +78,7 @@ public class EnrollmentDAO {
         }
         return Optional.empty();
     }
+
     public boolean deleteById(UUID id) {
         String deleteSQL = "DELETE FROM public.\"enrollment\" WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(deleteSQL)) {

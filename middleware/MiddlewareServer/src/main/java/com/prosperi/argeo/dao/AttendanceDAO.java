@@ -1,30 +1,37 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.enums.AttendanceMode;
-import com.prosperi.argeo.model.Attendance;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.enums.AttendanceMode;
+import com.prosperi.argeo.model.Attendance;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class AttendanceDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Attendance addAttendance(Attendance attendance) {
-        String insertSQL = "INSERT INTO public.\"attendance\" (lesson_id, user_id, present, mode, notes, record_time) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"attendance\" (id, lesson_id, user_id, present, mode, notes, record_time) VALUES (?, ?, ?, ?, ?::attendance_mode, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, attendance.getLessonId());
-            ps.setObject(2, attendance.getUserId());
-            ps.setBoolean(3, attendance.isPresent());
-            ps.setString(4, attendance.getMode().name());
-            ps.setString(5, attendance.getNotes());
-            ps.setTimestamp(6, Timestamp.valueOf(attendance.getRecordTime()));
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, attendance.getLessonId());
+            ps.setObject(3, attendance.getUserId());
+            ps.setBoolean(4, attendance.isPresent());
+            ps.setString(5, attendance.getMode().name().toLowerCase());
+            ps.setString(6, attendance.getNotes());
+            ps.setTimestamp(7, Timestamp.valueOf(attendance.getRecordTime()));
 
             ps.executeUpdate();
+            attendance.setId(id); // Imposta l'ID generato nella presenza
         } catch (SQLException e) {
             throw new RuntimeException("Error adding attendance", e);
         }

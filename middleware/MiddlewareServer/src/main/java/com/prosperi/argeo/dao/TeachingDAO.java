@@ -1,28 +1,35 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.model.Teaching;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.model.Teaching;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class TeachingDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Teaching addTeaching(Teaching teaching) {
-        String insertSQL = "INSERT INTO public.\"teaching\" (user_id, subject_id, course_id, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"teaching\" (id, user_id, subject_id, course_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, teaching.getUserId());
-            ps.setObject(2, teaching.getSubjectId());
-            ps.setObject(3, teaching.getCourseId());
-            ps.setDate(4, Date.valueOf(teaching.getStartDate()));
-            ps.setDate(5, Date.valueOf(teaching.getEndDate()));
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, teaching.getUserId());
+            ps.setObject(3, teaching.getSubjectId());
+            ps.setObject(4, teaching.getCourseId());
+            ps.setDate(5, Date.valueOf(teaching.getStartDate()));
+            ps.setDate(6, Date.valueOf(teaching.getEndDate()));
 
             ps.executeUpdate();
+            teaching.setId(id); // Imposta l'ID generato nell'insegnamento
         } catch (SQLException e) {
             throw new RuntimeException("Error adding teaching", e);
         }

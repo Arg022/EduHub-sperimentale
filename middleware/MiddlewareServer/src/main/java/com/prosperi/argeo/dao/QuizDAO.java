@@ -1,32 +1,39 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.model.Quiz;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.model.Quiz;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class QuizDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Quiz addQuiz(Quiz quiz) {
-        String insertSQL = "INSERT INTO public.\"quiz\" (course_id, creator_id, title, description, duration_minutes, max_attempts, creation_date, publication_date) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"quiz\" (id, course_id, creator_id, title, description, duration_minutes, max_attempts, creation_date, publication_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, quiz.getCourseId());
-            ps.setObject(2, quiz.getCreatorId());
-            ps.setString(3, quiz.getTitle());
-            ps.setString(4, quiz.getDescription());
-            ps.setInt(5, quiz.getDurationMinutes());
-            ps.setInt(6, quiz.getMaxAttempts());
-            ps.setTimestamp(7, Timestamp.valueOf(quiz.getCreationDate()));
-            ps.setTimestamp(8, Timestamp.valueOf(quiz.getPublicationDate()));
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, quiz.getCourseId());
+            ps.setObject(3, quiz.getCreatorId());
+            ps.setString(4, quiz.getTitle());
+            ps.setString(5, quiz.getDescription());
+            ps.setInt(6, quiz.getDurationMinutes());
+            ps.setInt(7, quiz.getMaxAttempts());
+            ps.setTimestamp(8, Timestamp.valueOf(quiz.getCreationDate()));
+            ps.setTimestamp(9, Timestamp.valueOf(quiz.getPublicationDate()));
 
             ps.executeUpdate();
+            quiz.setId(id); // Imposta l'ID generato nel quiz
         } catch (SQLException e) {
             throw new RuntimeException("Error adding quiz", e);
         }

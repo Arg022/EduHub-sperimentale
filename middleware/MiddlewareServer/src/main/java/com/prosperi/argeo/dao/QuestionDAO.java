@@ -1,9 +1,5 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.enums.QuestionType;
-import com.prosperi.argeo.model.Question;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,19 +9,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.enums.QuestionType;
+import com.prosperi.argeo.model.Question;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class QuestionDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Question addQuestion(Question question) {
-        String insertSQL = "INSERT INTO public.\"question\" (quiz_id, text, score, question_type) VALUES (?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"question\" (id, quiz_id, text, score, question_type) VALUES (?, ?, ?, ?, ?::question_type)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, question.getQuizId());
-            ps.setString(2, question.getText());
-            ps.setFloat(3, question.getScore());
-            ps.setString(4, question.getQuestionType().name());
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, question.getQuizId());
+            ps.setString(3, question.getText());
+            ps.setFloat(4, question.getScore());
+            ps.setString(5, question.getQuestionType().name().toLowerCase());
 
             ps.executeUpdate();
+            question.setId(id); // Imposta l'ID generato nella domanda
         } catch (SQLException e) {
             throw new RuntimeException("Error adding question", e);
         }

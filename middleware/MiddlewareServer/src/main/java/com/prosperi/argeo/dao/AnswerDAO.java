@@ -1,26 +1,32 @@
 package com.prosperi.argeo.dao;
 
-import com.prosperi.argeo.model.Answer;
-import com.prosperi.argeo.util.database.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.prosperi.argeo.model.Answer;
+import com.prosperi.argeo.util.database.DatabaseConnection;
+
 public class AnswerDAO {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
 
     public Answer addAnswer(Answer answer) {
-        String insertSQL = "INSERT INTO public.\"answer\" (question_id, text, is_correct) VALUES (?, ?, ?)";
+        String insertSQL = "INSERT INTO public.\"answer\" (id, question_id, text, is_correct) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(insertSQL)) {
-            ps.setObject(1, answer.getQuestionId());
-            ps.setString(2, answer.getText());
-            ps.setBoolean(3, answer.isCorrect());
+            UUID id = UUID.randomUUID();
+            ps.setObject(1, id);
+            ps.setObject(2, answer.getQuestionId());
+            ps.setString(3, answer.getText());
+            ps.setBoolean(4, answer.isCorrect());
 
             ps.executeUpdate();
+            answer.setId(id); // Imposta l'ID generato nella risposta
         } catch (SQLException e) {
             throw new RuntimeException("Error adding answer", e);
         }
