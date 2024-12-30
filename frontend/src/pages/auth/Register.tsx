@@ -1,54 +1,60 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { CheckCircle, Eye, EyeOff, XCircle } from "lucide-react";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const STORAGE_URL = import.meta.env.VITE_STORAGE_URL;
 
-const registerFormSchema = z
-  .object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, "Confirm password must be at least 8 characters"),
-  })
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "The passwords did not match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
+const registerFormSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email address")
+    .regex(
+      /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$/,
+      "Invalid email format"
+    ),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  role: z.enum(["student", "teacher", "admin"]),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+});
 
 type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 const initialValues: RegisterFormValues = {
-  name: "",
   email: "",
   password: "",
-  confirmPassword: "",
+  first_name: "",
+  last_name: "",
+  role: "student",
+  phone: "",
+  address: "",
 };
 
 const Register = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
-    useState(false);
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
@@ -72,22 +78,33 @@ const Register = () => {
   };
 
   return (
-    <div className="container max-w-md mx-auto p-6 space-y-5 ">
+    <div className="container max-w-md mx-auto p-6 space-y-5">
       <div className="mb-4">
         <h1 className="font-bold text-2xl">Register</h1>
-        <p>Register a new user</p>
+        <p>Create a new account</p>
       </div>
       <form className="space-y-4" onSubmit={handleSubmit(submitHandler)}>
         <div>
           <Input
-            {...register("name")}
-            placeholder="Full name"
-            type="text"
-            className={cn(errors.name && "border-destructive")}
+            {...register("first_name")}
+            placeholder="First name"
+            className={errors.first_name ? "border-destructive" : ""}
           />
-          {errors.name && (
+          {errors.first_name && (
             <span className="text-destructive text-sm">
-              {errors.name.message}
+              {errors.first_name.message}
+            </span>
+          )}
+        </div>
+        <div>
+          <Input
+            {...register("last_name")}
+            placeholder="Last name"
+            className={errors.last_name ? "border-destructive" : ""}
+          />
+          {errors.last_name && (
+            <span className="text-destructive text-sm">
+              {errors.last_name.message}
             </span>
           )}
         </div>
@@ -96,7 +113,7 @@ const Register = () => {
             {...register("email")}
             placeholder="Email"
             type="email"
-            className={cn(errors.email && "border-destructive")}
+            className={errors.email ? "border-destructive" : ""}
           />
           {errors.email && (
             <span className="text-destructive text-sm">
@@ -108,8 +125,8 @@ const Register = () => {
           <Input
             {...register("password")}
             placeholder="Password"
-            className={cn("pr-10", errors.password && "border-destructive")}
             type={isPasswordVisible ? "text" : "password"}
+            className={`pr-10 ${errors.password ? "border-destructive" : ""}`}
           />
           <Button
             type="button"
@@ -131,68 +148,64 @@ const Register = () => {
             </span>
           )}
         </div>
-        <div className="relative">
-          <Input
-            {...register("confirmPassword")}
-            placeholder="Confirm Password"
-            className={cn(
-              "pr-10",
-              errors.confirmPassword && "border-destructive"
+        <div>
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger
+                  className={errors.role ? "border-destructive" : ""}
+                >
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="student">Student</SelectItem>
+                  <SelectItem value="teacher">Teacher</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
             )}
-            type={isConfirmPasswordVisible ? "text" : "password"}
           />
-          <Button
-            type="button"
-            className="absolute right-1 top-1/2 -translate-y-1/2 p-0 size-8 cursor-pointer"
-            variant="ghost"
-            onClick={() =>
-              setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
-            }
-          >
-            <span className="pointer-events-none">
-              {isConfirmPasswordVisible ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </span>
-          </Button>
-          {errors.confirmPassword && (
+          {errors.role && (
             <span className="text-destructive text-sm">
-              {errors.confirmPassword.message}
+              {errors.role.message}
             </span>
           )}
+        </div>
+        <div>
+          <Input
+            {...register("phone")}
+            placeholder="Phone (optional)"
+            type="tel"
+          />
+        </div>
+        <div>
+          <Textarea {...register("address")} placeholder="Address (optional)" />
         </div>
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           Register
         </Button>
       </form>
       {success && (
-        <Alert className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
+        <Alert>
           <CheckCircle className="h-4 w-4" />
-          <div>
-            <AlertTitle>Registration Successful!</AlertTitle>
-            <AlertDescription>
-              You have successfully registered! Please login{" "}
-              <Link to="/auth/login" className="underline font-bold">
-                here
-              </Link>
-            </AlertDescription>
-          </div>
+          <AlertTitle>Registration Successful!</AlertTitle>
+          <AlertDescription>
+            You have successfully registered! Please login{" "}
+            <Link to="/auth/login" className="underline font-bold">
+              here
+            </Link>
+          </AlertDescription>
         </Alert>
       )}
       {error && (
-        <Alert
-          variant="destructive"
-          className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2"
-        >
+        <Alert variant="destructive">
           <XCircle className="h-4 w-4" />
-          <div>
-            <AlertTitle>Error during registration</AlertTitle>
-            <AlertDescription>
-              There was an error during the registration
-            </AlertDescription>
-          </div>
+          <AlertTitle>Error during registration</AlertTitle>
+          <AlertDescription>
+            There was an error during the registration
+          </AlertDescription>
         </Alert>
       )}
     </div>
