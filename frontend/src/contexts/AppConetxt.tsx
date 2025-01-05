@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 interface AppContextProps {
-  // Define the shape of your context here
   exampleState: string;
   setExampleState: (value: string) => void;
 }

@@ -39,9 +39,9 @@ import {
   createQuestion,
 } from "@/services/apiService";
 import { useNavigate } from "react-router-dom";
-import { ICourse } from "@/interfaces/interfaces"; // Importa l'interfaccia ICourse
-import { QuestionType } from "@/interfaces/types"; // Importa l'enum QuestionType
-import { useAuth } from "@/contexts/AuthContext"; // Importa il contesto di autenticazione
+import { ICourse } from "@/interfaces/interfaces";
+import { QuestionType } from "@/interfaces/types";
+import { useAuth } from "@/contexts/AuthContext";
 
 const questionTypeEnum = z.nativeEnum(QuestionType);
 
@@ -436,23 +436,28 @@ export function QuizCreate() {
                 </CardFooter>
               </Card>
             ))}
-            <Button
-              type="button"
-              onClick={() =>
-                appendQuestion({
-                  text: "",
-                  score: 1,
-                  questionType: QuestionType.MULTIPLE_CHOICE,
-                  answers: [
-                    { text: "", isCorrect: false },
-                    { text: "", isCorrect: false },
-                  ],
-                })
-              }
-            >
-              Add Question
-            </Button>
-            <Button type="submit">Create Quiz</Button>
+            <div className="flex items-center justify-between">
+              <Button
+                type="button"
+                onClick={() =>
+                  appendQuestion({
+                    text: "",
+                    score: 1,
+                    questionType: QuestionType.MULTIPLE_CHOICE,
+                    answers: [
+                      { text: "", isCorrect: false },
+                      { text: "", isCorrect: false },
+                    ],
+                  })
+                }
+                className="mt-4"
+              >
+                Add Question
+              </Button>
+              <Button type="submit" className="mt-4">
+                Create Quiz
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

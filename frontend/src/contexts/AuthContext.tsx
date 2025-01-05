@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setAsLogged = (token: string) => {
-    // setto il valore del token in localStorage
     localStorage.setItem("ACCESS_TOKEN", token);
     getUser(token, true);
   };

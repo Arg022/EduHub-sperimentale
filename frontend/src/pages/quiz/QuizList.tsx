@@ -3,15 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchQuizzes, fetchCourses } from "@/services/apiService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import DataTable from "@/components/ui/DataTable";
+import ActionButton from "@/components/ui/ActionButton";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,15 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { IQuiz } from "@/interfaces/interfaces";
 
@@ -39,7 +23,7 @@ export default function QuizList() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [courses, setCourses] = useState([]); 
+  const [courses, setCourses] = useState([]);
 
   const { user } = useAuth()!;
   const navigate = useNavigate();
@@ -59,10 +43,10 @@ export default function QuizList() {
         const quizzes = await fetchQuizzes(user.role, user.id);
         setQuizzes(quizzes);
         setFilteredQuizzes(quizzes);
-        const courseData = await fetchCourses(user.role, user.id); setCourses(courseData);
-      } catch (err) {
-        setError("Errore durante il caricamento dei quiz.");
-        console.error(err);
+        const courseData = await fetchCourses(user.role, user.id);
+        setCourses(courseData);
+      } catch (error) {
+        setError("Errore nel caricamento dei quiz.");
       } finally {
         setLoading(false);
       }
@@ -72,27 +56,10 @@ export default function QuizList() {
   }, [user]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
-    filterQuizzes(term, selectedCourse);
-  };
-
-  const handleCourseFilter = (courseId: string) => {
-    setSelectedCourse(courseId);
-    filterQuizzes(searchTerm, courseId === "all" ? "" : courseId);
-  };
-
-  const filterQuizzes = (term: string, courseId: string) => {
-    let filtered = quizzes.filter(
-      (quiz) =>
-        quiz.title.toLowerCase().includes(term) ||
-        (quiz.description && quiz.description.toLowerCase().includes(term))
+    setSearchTerm(event.target.value);
+    const filtered = quizzes.filter((quiz) =>
+      quiz.title.toLowerCase().includes(event.target.value.toLowerCase())
     );
-
-    if (courseId && courseId !== "all") {
-      filtered = filtered.filter((quiz) => quiz.courseId === courseId);
-    }
-
     setFilteredQuizzes(filtered);
   };
 
@@ -111,6 +78,38 @@ export default function QuizList() {
   if (loading) return <div>Caricamento...</div>;
   if (error) return <div>{error}</div>;
 
+  const columns = [
+    { header: "Titolo", accessor: "title" },
+    { header: "Durata", accessor: "durationMinutes" },
+    { header: "Tentativi", accessor: "maxAttempts" },
+    { header: "Stato", accessor: "status" },
+    { header: "Azioni", accessor: "actions" },
+  ];
+
+  const data = filteredQuizzes.map((quiz) => ({
+    title: quiz.title,
+    durationMinutes: `${quiz.durationMinutes} minuti`,
+    maxAttempts: quiz.maxAttempts,
+    status: quiz.publicationDate ? "Pubblicato" : "Bozza",
+    actions: (
+      <>
+        {user.role === "STUDENT" && quiz.publicationDate && (
+          <ActionButton
+            label="Inizia Quiz"
+            onClick={() => handleStartQuiz(quiz.id)}
+          />
+        )}
+        {(user.role === "TEACHER" || user.role === "ADMIN") && (
+          <ActionButton
+            label="Modifica"
+            onClick={() => handleEditQuiz(quiz.id)}
+            variant="outline"
+          />
+        )}
+      </>
+    ),
+  }));
+
   return (
     <Card className="w-full max-w-4xl mx-auto my-8">
       <CardHeader>
@@ -124,7 +123,7 @@ export default function QuizList() {
             onChange={handleSearch}
             className="max-w-sm"
           />
-          <Select onValueChange={handleCourseFilter}>
+          <Select value={selectedCourse} onValueChange={setSelectedCourse}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filtra per corso" />
             </SelectTrigger>
@@ -138,84 +137,7 @@ export default function QuizList() {
             </SelectContent>
           </Select>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Titolo</TableHead>
-              <TableHead>Durata</TableHead>
-              <TableHead>Tentativi</TableHead>
-              <TableHead>Stato</TableHead>
-              <TableHead>Azioni</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredQuizzes.map((quiz) => (
-              <TableRow key={quiz.id}>
-                <TableCell className="font-medium">{quiz.title}</TableCell>
-                <TableCell>{quiz.durationMinutes} minuti</TableCell>
-                <TableCell>{quiz.maxAttempts}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={quiz.publicationDate ? "default" : "secondary"}
-                  >
-                    {quiz.publicationDate ? "Pubblicato" : "Bozza"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Dettagli
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{quiz.title}</DialogTitle>
-                        <DialogDescription>
-                          {quiz.description}
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div>Durata: {quiz.durationMinutes} minuti</div>
-                        <div>Tentativi massimi: {quiz.maxAttempts}</div>
-                        <div>
-                          Data di creazione:{" "}
-                          {new Date(quiz.creationDate).toLocaleString()}
-                        </div>
-                        {quiz.publicationDate && (
-                          <div>
-                            Data di pubblicazione:{" "}
-                            {new Date(quiz.publicationDate).toLocaleString()}
-                          </div>
-                        )}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                  {user.role === "STUDENT" && quiz.publicationDate && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="ml-2"
-                      onClick={() => handleStartQuiz(quiz.id)}
-                    >
-                      Inizia Quiz
-                    </Button>
-                  )}
-                  {(user.role === "TEACHER" || user.role === "ADMIN") && (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="ml-2"
-                      onClick={() => handleEditQuiz(quiz.id)}
-                    >
-                      Modifica
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <DataTable columns={columns} data={data} />
       </CardContent>
     </Card>
   );

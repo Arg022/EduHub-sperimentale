@@ -79,7 +79,7 @@ export function CourseCreate() {
           </pre>
         ),
       });
-      navigate("/courses"); // Reindirizza alla pagina dei corsi
+      navigate("/courses");
     } catch (error) {
       toast({
         title: "Error creating course",

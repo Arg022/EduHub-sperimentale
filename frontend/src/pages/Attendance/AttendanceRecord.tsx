@@ -1,30 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import DataTable from "@/components/ui/DataTable";
+import ActionButton from "@/components/ui/ActionButton";
 import { useToast } from "@/hooks/use-toast";
-import {
-  fetchLessonDetails,
-  fetchStudents,
-  recordAttendance,
-} from "@/services/apiService";
+import { fetchLessonDetails, fetchStudents, recordAttendance } from "@/services/apiService";
 import { ILesson, IUser } from "@/interfaces/interfaces";
 
 export default function AttendanceRecord() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const [lesson, setLesson] = useState<ILesson | null>(null);
   const [students, setStudents] = useState<IUser[]>([]);
-  const [attendance, setAttendance] = useState<{
-    [studentId: string]: boolean;
-  }>({});
+  const [attendance, setAttendance] = useState<{ [studentId: string]: boolean }>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,39 +55,30 @@ export default function AttendanceRecord() {
     return <div>Loading...</div>;
   }
 
+  const columns = [
+    { header: "Student Name", accessor: "name" },
+    { header: "Present", accessor: "present" },
+  ];
+
+  const data = students.map((student) => ({
+    name: `${student.firstName} ${student.lastName}`,
+    present: (
+      <input
+        type="checkbox"
+        checked={attendance[student.id] || false}
+        onChange={(e) => handleAttendanceChange(student.id, e.target.checked)}
+      />
+    ),
+  }));
+
   return (
     <Card className="w-[800px] mx-auto my-8">
       <CardHeader>
         <CardTitle>Attendance for {lesson.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Student Name</TableHead>
-              <TableHead>Present</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{`${student.firstName} ${student.lastName}`}</TableCell>
-                <TableCell>
-                  <input
-                    type="checkbox"
-                    checked={attendance[student.id] || false}
-                    onChange={(e) =>
-                      handleAttendanceChange(student.id, e.target.checked)
-                    }
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <Button onClick={handleSaveAttendance} className="mt-4">
-          Save Attendance
-        </Button>
+        <DataTable columns={columns} data={data} />
+        <ActionButton label="Save Attendance" onClick={handleSaveAttendance} className="mt-4" />
       </CardContent>
     </Card>
   );
