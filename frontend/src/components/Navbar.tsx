@@ -1,8 +1,5 @@
-import * as React from "react";
-import { Laptop, Moon, Sun, User } from "lucide-react";
-
+import { Laptop, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -44,14 +41,14 @@ export function Navbar() {
                                     alt="@johndoe"
                                 />
                                 <AvatarFallback>
-                                    {`${user?.name.charAt(0)}${user?.name.charAt(1)}`.toUpperCase()}
+                                    {`${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`.toUpperCase()}
                                 </AvatarFallback>
                             </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{user?.name}</p>
+                                    <p className="text-sm font-medium leading-none">{user?.firstName}</p>
                                     <p className="text-xs leading-none text-muted-foreground">
                                         {user?.email}
                                     </p>

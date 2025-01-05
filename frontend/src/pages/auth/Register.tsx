@@ -28,9 +28,9 @@ const registerFormSchema = z.object({
       "Invalid email format"
     ),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  role: z.enum(["student", "teacher", "admin"]),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  role: z.enum(["STUDENT", "TEACHER", "ADMIN"]),
   phone: z.string().optional(),
   address: z.string().optional(),
 });
@@ -40,9 +40,9 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>;
 const initialValues: RegisterFormValues = {
   email: "",
   password: "",
-  first_name: "",
-  last_name: "",
-  role: "student",
+  firstName: "",
+  lastName: "",
+  role: "STUDENT",
   phone: "",
   address: "",
 };
@@ -66,7 +66,7 @@ const Register = () => {
     setError(false);
     setSuccess(false);
     axios
-      .post(`${STORAGE_URL}/auth/register`, data)
+      .post(`${STORAGE_URL}/api/v1/register`, data)
       .then((res) => {
         console.log(res.data);
         setSuccess(true);
@@ -86,25 +86,25 @@ const Register = () => {
       <form className="space-y-4" onSubmit={handleSubmit(submitHandler)}>
         <div>
           <Input
-            {...register("first_name")}
+            {...register("firstName")}
             placeholder="First name"
-            className={errors.first_name ? "border-destructive" : ""}
+            className={errors.firstName ? "border-destructive" : ""}
           />
-          {errors.first_name && (
+          {errors.firstName && (
             <span className="text-destructive text-sm">
-              {errors.first_name.message}
+              {errors.firstName.message}
             </span>
           )}
         </div>
         <div>
           <Input
-            {...register("last_name")}
+            {...register("lastName")}
             placeholder="Last name"
-            className={errors.last_name ? "border-destructive" : ""}
+            className={errors.lastName ? "border-destructive" : ""}
           />
-          {errors.last_name && (
+          {errors.lastName && (
             <span className="text-destructive text-sm">
-              {errors.last_name.message}
+              {errors.lastName.message}
             </span>
           )}
         </div>
@@ -160,9 +160,9 @@ const Register = () => {
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="student">Student</SelectItem>
-                  <SelectItem value="teacher">Teacher</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="STUDENT">Student</SelectItem>
+                  <SelectItem value="TEACHER">Teacher</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
                 </SelectContent>
               </Select>
             )}
