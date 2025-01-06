@@ -9,10 +9,10 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const STORAGE_URL = import.meta.env.VITE_STORAGE_URL;
+const BASE_URL_URL = "http://localhost:8082/api/v1";
 
 export const api = axios.create({
-  baseURL: `${STORAGE_URL}/api`,
+  baseURL: `${BASE_URL_URL}/api/v1`,
 });
 
 interface IAuthContextProps {
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getUser = (token: string, isLogin: boolean = false) => {
     if (token) {
       axios
-        .get(`${STORAGE_URL}/api/v1/user`, {
+        .get(`${BASE_URL_URL}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

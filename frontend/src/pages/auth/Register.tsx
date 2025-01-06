@@ -17,7 +17,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
-const STORAGE_URL = import.meta.env.VITE_STORAGE_URL;
+const BASE_URL_URL = "http://localhost:8082/api/v1/";
 
 const registerFormSchema = z.object({
   email: z
@@ -66,7 +66,7 @@ const Register = () => {
     setError(false);
     setSuccess(false);
     axios
-      .post(`${STORAGE_URL}/api/v1/register`, data)
+      .post(`http://localhost:8082/api/v1/register`, data)
       .then((res) => {
         console.log(res.data);
         setSuccess(true);
