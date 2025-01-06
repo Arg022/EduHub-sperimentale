@@ -4,14 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DataTable from "@/components/ui/DataTable";
 import ActionButton from "@/components/ui/ActionButton";
 import { useToast } from "@/hooks/use-toast";
-import { fetchLessonDetails, fetchStudents, recordAttendance } from "@/services/apiService";
+import {
+  fetchLessonDetails,
+  fetchStudents,
+  recordAttendance,
+} from "@/services/apiService";
 import { ILesson, IUser } from "@/interfaces/interfaces";
 
 export default function AttendanceRecord() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const [lesson, setLesson] = useState<ILesson | null>(null);
   const [students, setStudents] = useState<IUser[]>([]);
-  const [attendance, setAttendance] = useState<{ [studentId: string]: boolean }>({});
+  const [attendance, setAttendance] = useState<{
+    [studentId: string]: boolean;
+  }>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -39,14 +45,12 @@ export default function AttendanceRecord() {
       toast({
         title: "Success",
         description: "Attendance has been recorded successfully.",
-        status: "success",
       });
     } catch (error) {
       console.error("Error recording attendance", error);
       toast({
         title: "Error",
         description: "There was an error recording the attendance.",
-        status: "error",
       });
     }
   };
@@ -78,7 +82,7 @@ export default function AttendanceRecord() {
       </CardHeader>
       <CardContent>
         <DataTable columns={columns} data={data} />
-        <ActionButton label="Save Attendance" onClick={handleSaveAttendance} className="mt-4" />
+        <ActionButton label="Save Attendance" onClick={handleSaveAttendance} />
       </CardContent>
     </Card>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,9 +16,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { fetchLessons, fetchAttendanceByLesson, fetchStudents } from "@/services/apiService";
+import {
+  fetchLessons,
+  fetchAttendanceByLesson,
+  fetchStudents,
+} from "@/services/apiService";
 import { ILesson, IAttendance, IUser } from "@/interfaces/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
+import { format } from "date-fns";
 
 export default function AttendanceReport() {
   const { user } = useAuth();
@@ -75,7 +80,9 @@ export default function AttendanceReport() {
             {lessons.map((lesson) => (
               <TableRow key={lesson.id}>
                 <TableCell>{lesson.title}</TableCell>
-                <TableCell>{lesson.date}</TableCell>
+                <TableCell>
+                  {format(new Date(lesson.date), "dd/MM/yyyy")}
+                </TableCell>
                 <TableCell>
                   <Dialog>
                     <DialogTrigger asChild>
@@ -99,9 +106,11 @@ export default function AttendanceReport() {
                         <TableBody>
                           {attendance.map((record) => (
                             <TableRow key={record.id}>
-                              <TableCell>{getStudentName(record.userId)}</TableCell>
                               <TableCell>
-                                {record.present ? "Yes" : "No"}
+                                {getStudentName(record.userId)}
+                              </TableCell>
+                              <TableCell>
+                                {record.present ? "Si" : "No"}
                               </TableCell>
                             </TableRow>
                           ))}

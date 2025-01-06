@@ -21,6 +21,7 @@ import { fetchCourses } from "@/services/apiService";
 import { ICourse } from "@/interfaces/interfaces";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { format } from "date-fns";
 
 export default function CoursesList() {
   const { user } = useAuth();
@@ -100,10 +101,12 @@ export default function CoursesList() {
                 <strong>Descrizione:</strong> {course.description}
               </p>
               <p>
-                <strong>Data di inizio:</strong> {course.startDate}
+                <strong>Data di inizio:</strong>{" "}
+                {format(new Date(course.startDate), "dd/MM/yyyy")}
               </p>
               <p>
-                <strong>Data di fine:</strong> {course.endDate}
+                <strong>Data di fine:</strong>{" "}
+                {format(new Date(course.endDate), "dd/MM/yyyy")}
               </p>
               <Badge
                 variant={course.level === "BEGINNER" ? "default" : "secondary"}

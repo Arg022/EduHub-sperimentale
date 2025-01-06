@@ -35,6 +35,7 @@ import {
   fetchSubjects,
   createLesson,
 } from "@/services/apiService";
+import { format, parseISO } from "date-fns";
 
 export default function LessonList() {
   const { user } = useAuth();
@@ -147,9 +148,18 @@ export default function LessonList() {
               filteredLessons.map((lesson) => (
                 <TableRow key={lesson.id}>
                   <TableCell>{lesson.title}</TableCell>
-                  <TableCell>{lesson.date}</TableCell>
-                  <TableCell>{lesson.startTime}</TableCell>
-                  <TableCell>{lesson.endTime}</TableCell>
+                  <TableCell>
+                    {format(new Date(lesson.date), "dd/MM/yyyy")}
+                  </TableCell>
+                  <TableCell>
+                    {format(
+                      parseISO(`1970-01-01T${lesson.startTime}`),
+                      "HH:mm"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {format(parseISO(`1970-01-01T${lesson.endTime}`), "HH:mm")}
+                  </TableCell>
                   {(user.role === "ADMIN" || user.role === "TEACHER") && (
                     <TableCell>
                       <Button onClick={() => handleAttendance(lesson.id)}>

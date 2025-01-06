@@ -129,14 +129,9 @@ export function QuizCreate() {
 
   const onSubmit = async (data: QuizFormValues) => {
     try {
-      // Aggiungi creator_id al payload
       const payload = { ...data, creator_id: user?.id };
-
-      // Create the quiz
       const quizResponse = await createQuiz(payload);
       const quizId = quizResponse.id;
-
-      // Create each question
       for (const question of data.questions) {
         await createQuestion({ ...question, quizId });
       }
@@ -151,7 +146,7 @@ export function QuizCreate() {
           </pre>
         ),
       });
-      navigate("/quizzes");
+      navigate("/quiz");
     } catch (error) {
       toast({
         title: "Error creating quiz",

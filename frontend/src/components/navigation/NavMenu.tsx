@@ -101,7 +101,7 @@ const menuItems: MenuItem[] = [
       {
         label: "Metti Presenze",
         path: "/lessons",
-        roles: ["STUDENT", "TEACHER", "ADMIN"],
+        roles: ["TEACHER", "ADMIN"],
         icon: <Calendar className="h-4 w-4" />,
       },
       {
@@ -121,7 +121,7 @@ const menuItems: MenuItem[] = [
   {
     label: "Notifiche",
     path: "/notifications",
-    roles: ["STUDENT", "TEACHER", "ADMIN"],
+    roles: ["TEACHER", "ADMIN"],
     icon: <Bell className="h-4 w-4" />,
     subItems: [
       {
